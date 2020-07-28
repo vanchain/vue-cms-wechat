@@ -24,7 +24,7 @@
 				</el-table-column>
 				<el-table-column prop="operation" label="操作">
 					<template slot-scope="scope">
-						<el-link :href="`#/goodsmanage/edit/${scope.row.id}`" class="am-margin-right-sm">
+						<el-link :href="`#/goods/edit/${scope.row.id}`" class="am-margin-right-sm">
 							<el-button type="primary" size="mini" icon="el-icon-edit" plain>编辑</el-button>
 						</el-link>
 						<el-button @click="deleteGoods(scope.row.id,scope.$index)" type="danger" plain icon="el-icon-delete">删除</el-button>

@@ -58,7 +58,7 @@
 				</div>
 				<div v-for="option in item.children" :key="option.id" class="text item">
 					<span>{{option.name}}</span>
-					<el-switch v-model="option.checked"></el-switch>
+					<el-switch v-model="option.checked" @change="clickChild(option,item)"></el-switch>
 				</div>
 			</el-card>
 		</div>
@@ -87,6 +87,7 @@
 				addFromVisible: false,
 				rightsArrAll: [], // 权限数组
 				rightsId: '',
+				roleMenuId:'',
 				isRightsShow: false,
 				value1: true,
 				value2: true
@@ -120,31 +121,31 @@
 			},
 			async clickParent({ id, checked, children }) {
 				if (checked) {
-					let { status } = await Rights.add_rights({ role_id: this.roleMenuId, menu_id: id });
+					let { status } = await Rights.add_rights({ role_id: this.rightsId, menu_id: id });
 					children.forEach(async (item) => {
-						let { status } = await Rights.add_rights({ role_id: this.roleMenuId, menu_id: item.id });
+						let { status } = await Rights.add_rights({ role_id: this.rightsId, menu_id: item.id });
 						item.checked = checked;
 					})
 				} else {
-					let { status } = await Rights.del_rights({ role_id: this.roleMenuId, menu_id: id });
+					let { status } = await Rights.del_rights({ role_id: this.rightsId, menu_id: id });
 					children.forEach(async (item) => {
-						let { status } = await Rights.del_rights({ role_id: this.roleMenuId, menu_id: item.id });
+						let { status } = await Rights.del_rights({ role_id: this.rightsId, menu_id: item.id });
 						item.checked = checked;
 					})
 				}
 			},
 			async clickChild({ checked, id }, parent) {
 			    if (checked) {
-			        let { status } = await Rights.add_rights({ role_id: this.roleMenuId, menu_id: id });
+			        let { status } = await Rights.add_rights({ role_id: this.rightsId, menu_id: id });
 			        if (!parent.checked) {
-			            let { status } = await Rights.add_rights({ role_id: this.roleMenuId, menu_id: parent.id });
+			            let { status } = await Rights.add_rights({ role_id: this.rightsId, menu_id: parent.id });
 			            parent.checked = checked;
 			        }
 			    } else {
-			        let { status } = await Rights.del_rights({ role_id: this.roleMenuId, menu_id: id });
+			        let { status } = await Rights.del_rights({ role_id: this.rightsId, menu_id: id });
 			        var isclick = parent.children.every((item) => item.checked == false);
 			        if (isclick) {
-			            let { status } = await Rights.del_rights({ role_id: this.roleMenuId, menu_id: parent.id });
+			            let { status } = await Rights.del_rights({ role_id: this.rightsId, menu_id: parent.id });
 			            parent.checked = checked;
 			        }
 			    }
