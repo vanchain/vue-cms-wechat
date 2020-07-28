@@ -11,8 +11,8 @@
 					<template slot="title">
 						<el-avatar class="right_avatar" size="large" :src="form.avatar"></el-avatar>{{form.name}}
 					</template>
-					<el-menu-item index="/usermanage/list">消息</el-menu-item>
-					<el-menu-item index="/rightsset/userrole">设置</el-menu-item>
+					<el-menu-item index="/user/list">消息</el-menu-item>
+					<el-menu-item index="/accountset/info">设置</el-menu-item>
 					<el-menu-item index="/login">退出</el-menu-item>
 				</el-submenu>
 			</el-menu>

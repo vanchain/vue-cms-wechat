@@ -17,7 +17,7 @@ const routes = [{
 		component: () => import('../views/Register.vue')
 	},
 	{
-		path: '/goodsmanage/',
+		path: '/goods/',
 		name: 'GoodsManage',
 		component: Layout,
 		children: [{
@@ -44,7 +44,7 @@ const routes = [{
 		]
 	},
 	{
-		path: '/ordermanage/',
+		path: '/order/',
 		name: 'OrderManage',
 		component: Layout,
 		children: [{
@@ -64,7 +64,7 @@ const routes = [{
 		}]
 	},
 	{
-		path: '/usermanage/',
+		path: '/user/',
 		name: 'UserManage',
 		component: Layout,
 		children: [{
@@ -74,16 +74,16 @@ const routes = [{
 		}]
 	},
 	{
-		path: '/rightsset/',
+		path: '/auth/',
 		name: 'RightsSet',
 		component: Layout,
 		children: [{
-			path: 'menurights',
+			path: 'menu',
 			name: 'MenuRights',
 			component: () => import('../views/RightsSet/MenuRights.vue')
 		},
 		{
-			path: 'userrole',
+			path: 'role',
 			name: 'UserRole',
 			component: () => import('../views/RightsSet/UserRole.vue')
 		}]

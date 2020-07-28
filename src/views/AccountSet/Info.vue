@@ -107,7 +107,7 @@
 						let {status,data,msg} = await Admin.edit({...this.form});
 						if(status){
 							this.$message.success(msg);
-							this.$router.push('/usermanage/list');
+							this.$router.push('/user/list');
 						}
 					}
 				});

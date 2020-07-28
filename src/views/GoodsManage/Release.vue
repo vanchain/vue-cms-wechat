@@ -278,7 +278,7 @@
 				let { status, data, msg } = await Goods.release({ ...this.form });
 				if (status) {
 					this.$message.success(msg);
-					this.$router.push('/goodsmanage/list');
+					this.$router.push('/goods/list');
 				}
 			},
 			// 加载商品的分类

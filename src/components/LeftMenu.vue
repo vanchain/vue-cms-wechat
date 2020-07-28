@@ -1,67 +1,43 @@
 <template>
-	<div>
-		<el-menu router default-active="2" class="el-menu-vertical-demo left_menu" background-color="#334e66"
-		 text-color="#fff" active-text-color="#ffd04b" :collapse="isCollapse">
-			<el-submenu index="1">
-				<template slot="title">
-					<i class="el-icon-goods"></i>
-					<span>商品管理</span>
-				</template>
-				<el-menu-item-group>
-					<el-menu-item index="/goodsmanage/category">商品分类</el-menu-item>
-					<el-menu-item index="/goodsmanage/release">发布商品</el-menu-item>
-					<el-menu-item index="/goodsmanage/list">商品列表</el-menu-item>
-				</el-menu-item-group>
-			</el-submenu>
-			<el-submenu index="2">
-				<template slot="title">
-					<i class="el-icon-files"></i>
-					<span>订单管理</span>
-				</template>
-				<el-menu-item-group>
-					<el-menu-item index="/ordermanage/list">订单列表</el-menu-item>
-				</el-menu-item-group>
-			</el-submenu>
-			<el-submenu index="3">
-				<template slot="title">
-					<i class="el-icon-setting"></i>
-					<span>账户设置</span>
-				</template>
-				<el-menu-item-group>
-					<el-menu-item index="/accountset/info">账户信息</el-menu-item>
-				</el-menu-item-group>
-			</el-submenu>
-			<el-submenu index="4">
-				<template slot="title">
-					<i class="el-icon-user"></i>
-					<span>用户管理</span>
-				</template>
-				<el-menu-item-group>
-					<el-menu-item index="/usermanage/list">用户列表</el-menu-item>
-				</el-menu-item-group>
-			</el-submenu>
-			<el-submenu index="5">
-				<template slot="title">
-					<i class="el-icon-set-up"></i>
-					<span>权限设置</span>
-				</template>
-				<el-menu-item-group>
-					<el-menu-item index="/rightsset/userrole">用户角色</el-menu-item>
-					<el-menu-item index="/rightsset/menurights">菜单权限</el-menu-item>
-				</el-menu-item-group>
-			</el-submenu>
-		</el-menu>
-	</div>
+	<el-menu router :collapse="isCollapse" background-color="#334e66" text-color="#fff" active-text-color="#ffd04b" class="left-menu">
+		<el-submenu v-for="(item,index) in menuList" :key="item.id" :index="index+''">
+			<template slot="title">
+				<i :class="'el-icon-' + item.icon"></i>
+				<span>{{item.name}}</span>
+			</template>
+			<el-menu-item v-for="(item) in item.children" :key="item.id" :index="item.path">{{item.name}}
+			</el-menu-item>
+		</el-submenu>
+	</el-menu>
 </template>
 
 <script>
+	import {Rights} from '@/api/index'
 	export default {
-		props:['isCollapse'],
+		props: ['isCollapse'],
+		data(){
+			return{
+				menuList:[]
+			}
+		},
+		created() {
+			this.loadMenuList();
+		},
+		methods:{
+			async loadMenuList(){
+				let id = sessionStorage.uid;
+				let {status,data} = await Rights.menu({id});
+				if(status){
+					console.log(data);
+					this.menuList = data;
+				}
+			}
+		}
 	}
 </script>
 
 <style>
-	.left_menu{
+	.left_menu {
 		height: calc(100vh - 60px);
 		background-color: #334e66;
 	}

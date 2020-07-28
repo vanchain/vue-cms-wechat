@@ -1,11 +1,11 @@
 <template>
-	<div>
+	<div class="layout">
 		<el-card class="box-card">
 			<div slot="header" class="clearfix">
 				<span>角色列表</span>
 				<el-button @click="addRole" icon="el-icon-circle-plus-outline" style="float: right" plain type="primary">添加角色</el-button>
 			</div>
-			<div class="text item">
+			<div class="text">
 				<el-table :data="tableData" style="width: 100%">
 					<el-table-column prop="id" label="#">
 					</el-table-column>
@@ -18,7 +18,7 @@
 						<template slot-scope="scope">
 							<el-button @click="editRole(scope.row.id,scope.$index)" :disabled="scope.row.id == 1" type="primary" plain icon="el-icon-edit"></el-button>
 							<el-button @click="deleteRole(scope.row.id,scope.$index)" :disabled="scope.row.id == 1" type="danger" plain icon="el-icon-delete"></el-button>
-							<el-button type="primary" plain icon="el-icon-setting"></el-button>
+							<el-button @click="loadRights(scope.row.id)" type="primary" plain icon="el-icon-setting"></el-button>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -50,15 +50,18 @@
 			</div>
 		</el-dialog>
 		<!-- 权限设置 -->
-		<el-card class="box-card">
-			<div slot="header" class="clearfix">
-				<span>卡片名称</span>
-				<el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
-			</div>
-			<div v-for="o in 4" :key="o" class="text item">
-				{{'列表内容 ' + o }}
-			</div>
-		</el-card>
+		<div class="right" v-show="isRightsShow">
+			<el-card v-for="item in rightsArrAll" :key="item.id" class="box-card box-card-right">
+				<div slot="header" class="clearfix top">
+					<span>{{item.name}}</span>
+					<el-switch @change="clickParent(item)" v-model="item.checked"></el-switch>
+				</div>
+				<div v-for="option in item.children" :key="option.id" class="text item">
+					<span>{{option.name}}</span>
+					<el-switch v-model="option.checked"></el-switch>
+				</div>
+			</el-card>
+		</div>
 	</div>
 </template>
 
@@ -81,13 +84,17 @@
 					]
 				},
 				editFromVisible: false,
-				addFromVisible: false
+				addFromVisible: false,
+				rightsArrAll: [], // 权限数组
+				rightsId: '',
+				isRightsShow: false,
+				value1: true,
+				value2: true
 			}
 		},
 		created() {
 			this.loadRoleList();
 			this.typeHandle();
-			this.loadRights();
 		},
 		methods: {
 			// 加载角色列表
@@ -103,9 +110,44 @@
 				}
 			},
 			// 获取权限
-			async loadRights() {
-				let res = await Rights.rights({ id: 1 });
-				console.log(res);
+			async loadRights(id) {
+				this.isRightsShow = true;
+				let { status, data } = await Rights.rights({ id });
+				if (status) {
+					this.rightsArrAll = data;
+					this.rightsId = id;
+				}
+			},
+			async clickParent({ id, checked, children }) {
+				if (checked) {
+					let { status } = await Rights.add_rights({ role_id: this.roleMenuId, menu_id: id });
+					children.forEach(async (item) => {
+						let { status } = await Rights.add_rights({ role_id: this.roleMenuId, menu_id: item.id });
+						item.checked = checked;
+					})
+				} else {
+					let { status } = await Rights.del_rights({ role_id: this.roleMenuId, menu_id: id });
+					children.forEach(async (item) => {
+						let { status } = await Rights.del_rights({ role_id: this.roleMenuId, menu_id: item.id });
+						item.checked = checked;
+					})
+				}
+			},
+			async clickChild({ checked, id }, parent) {
+			    if (checked) {
+			        let { status } = await Rights.add_rights({ role_id: this.roleMenuId, menu_id: id });
+			        if (!parent.checked) {
+			            let { status } = await Rights.add_rights({ role_id: this.roleMenuId, menu_id: parent.id });
+			            parent.checked = checked;
+			        }
+			    } else {
+			        let { status } = await Rights.del_rights({ role_id: this.roleMenuId, menu_id: id });
+			        var isclick = parent.children.every((item) => item.checked == false);
+			        if (isclick) {
+			            let { status } = await Rights.del_rights({ role_id: this.roleMenuId, menu_id: parent.id });
+			            parent.checked = checked;
+			        }
+			    }
 			},
 			// 编辑角色
 			editRole(id, index) {
@@ -160,16 +202,43 @@
 	}
 </script>
 
-<style scoped="scoped">
-	.box-card {
-		width: 700px;
+<style lang="less" scoped="scoped">
+	.layout {
+		display: flex;
+		justify-content: space-between;
 	}
 
-	.btn {
-		cursor: default;
+	.box-card {
+		width: 700px;
+		height: 100%;
+	}
+
+	.right {
+		width: 55%;
+	}
+
+	.box-card-right.box-card {
+		width: 100%;
+		height: auto;
+		margin-bottom: 20px;
+
+		.top {
+			display: flex;
+			justify-content: space-between;
+		}
 	}
 
 	.el-form--label-left .el-form-item__label {
 		text-align: left;
+	}
+
+	.item {
+		display: flex;
+		justify-content: space-between;
+
+		span {
+			font-size: 14px;
+			margin-bottom: 10px;
+		}
 	}
 </style>

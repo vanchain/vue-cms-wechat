@@ -8,6 +8,10 @@ let sub = (data) => axios.get('/api/menu/sub',{params:data});
 let add_menu = (data) => axios.post('/api/menu',data);
 // 编辑菜单节点
 let edit_menu = (data) => axios.put('/api/menu',data);
+// 为指定角色删除菜单
+let del_rights = (data) => axios.delete('/api/role/menu',{params:data});
+// 为指定角色添加菜单
+let add_rights = (data) => axios.post('/api/role/menu',data);
 // 删除角色
 let del = (data) => axios.delete('/api/role',{params:data});
 // 添加角色
@@ -22,6 +26,8 @@ let icon = (data) => axios.get('/api/admin/icon/list',{params:data});
 let icon_set = (data) => axios.put('/api/menu/icon',data);
 // 获取权限
 let rights = (data) => axios.get('/api/role/config',{params:data});
+// 获取左侧菜单
+let menu = (data) => axios.get('/api/menu/tree',{params:data});
 
 export default{
 	list,
@@ -34,5 +40,8 @@ export default{
 	del_node,
 	icon,
 	icon_set,
-	rights
+	rights,
+	del_rights,
+	add_rights,
+	menu
 }

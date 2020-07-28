@@ -62,7 +62,7 @@
 								this.$router.replace(redirect);
 								return;
 							}
-							this.$router.push('/goodsmanage/list');
+							this.$router.push('/goods/list');
 						} else {
 							this.$message.error(msg)
 						}
